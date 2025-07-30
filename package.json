@@ -1,0 +1,51 @@
+{
+  "name": "jetson-strategy",
+  "version": "1.0.0",
+  "description": "Home Assistant Lovelace Strategy",
+  "main": "dist/jetson-strategy.js",
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack --watch --mode development",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix"
+  },
+  "keywords": [
+    "home-assistant",
+    "lovelace",
+    "strategy",
+    "hacs",
+    "dashboard"
+  ],
+  "author": "JetsonControls",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jetsoncontrols/ha-jetson-strategy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jetsoncontrols/ha-jetson-strategy/issues"
+  },
+  "homepage": "https://github.com/jetsoncontrols/ha-jetson-strategy#readme",
+  "devDependencies": {
+    "@types/semver": "^7.7.0",
+    "@typescript-eslint/eslint-plugin": "^8.33.0",
+    "@typescript-eslint/parser": "^8.32.1",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.0",
+    "home-assistant-js-websocket": "^9.5.0",
+    "markdownlint-cli2": "^0.18.1",
+    "prettier": "^3.5.3",
+    "semver": "^7.7.2",
+    "superstruct": "^2.0.2",
+    "ts-loader": "^9.5.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "version-bump-prompt": "^6",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "deepmerge": "^4"
+  }
+}
