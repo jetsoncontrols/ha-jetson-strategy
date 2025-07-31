@@ -7,6 +7,7 @@ import { AreaCardConfig, StackCardConfig } from '../types/homeassistant/panels/l
 import { MushroomPersonCardConfig } from '../types/lovelace/cards/mushroom/person-card-config';
 import { MushroomTemplateCardConfig } from '../types/lovelace/cards/mushroom/template-card-config';
 import { TileCardConfig } from '../types/lovelace/cards/tile-card-config';
+import { ClockWeatherCardConfig } from '../types/lovelace/cards/clock-weather-card-config';
 import { ViewConfig } from '../types/strategy/strategy-views';
 import { sanitizeClassName } from '../utilities/auxiliaries';
 import { logMessage, lvlError, lvlInfo } from '../utilities/debug';
@@ -39,7 +40,7 @@ class HomeView extends AbstractView {
   static getDefaultConfig(): ViewConfig {
     return {
       title: localize('generic.home'),
-      icon: 'mdi:home',
+      icon: undefined,//'mdi:home',
       path: 'home',
       subview: false,
     };
@@ -53,12 +54,11 @@ class HomeView extends AbstractView {
   async createCardConfigurations(): Promise<LovelaceCardConfig[]> {
     const homeViewCards: LovelaceCardConfig[] = [];
 
-    let personsSection, areasSection, lightsOnSection;
+    let weatherSection, lightsOnSection;
 
     try {
-      [personsSection, areasSection, lightsOnSection] = await Promise.all([
-        this.createPersonsSection(),
-        this.createAreasSection(),
+      [weatherSection, lightsOnSection] = await Promise.all([
+        this.weatherSection(),
         this.createLightsOnSection(),
       ]);
     } catch (e) {
@@ -67,45 +67,44 @@ class HomeView extends AbstractView {
       return homeViewCards;
     }
 
-    if (personsSection) {
-      homeViewCards.push(personsSection);
-    }
-
     // Create the greeting section.
-    if (!Registry.strategyOptions.home_view.hidden.includes('greeting')) {
-      homeViewCards.push({
-        type: 'custom:mushroom-template-card',
-        primary: `{% set time = now().hour %}
-           {% if (time >= 18) %}
-             ${localize('generic.good_evening')},{{user}}!
-           {% elif (time >= 12) %}
-             ${localize('generic.good_afternoon')}, {{user}}!
-           {% elif (time >= 6) %}
-             ${localize('generic.good_morning')}, {{user}}!
-           {% else %}
-             ${localize('generic.hello')}, {{user}}! {% endif %}`,
-        icon: 'mdi:hand-wave',
-        icon_color: 'orange',
-        tap_action: {
-          action: 'none',
-        } as ActionConfig,
-        double_tap_action: {
-          action: 'none',
-        } as ActionConfig,
-        hold_action: {
-          action: 'none',
-        } as ActionConfig,
-      } as MushroomTemplateCardConfig);
-    }
+    // if (!Registry.strategyOptions.home_view.hidden.includes('greeting')) {
+    //   homeViewCards.push({
+    //     type: 'custom:mushroom-template-card',
+    //     primary: `{% set time = now().hour %}
+    //        {% if (time >= 18) %}
+    //          ${localize('generic.good_evening')},{{user}}!
+    //        {% elif (time >= 12) %}
+    //          ${localize('generic.good_afternoon')}, {{user}}!
+    //        {% elif (time >= 6) %}
+    //          ${localize('generic.good_morning')}, {{user}}!
+    //        {% else %}
+    //          ${localize('generic.hello')}, {{user}}! {% endif %}`,
+    //     icon: 'mdi:hand-wave',
+    //     icon_color: 'orange',
+    //     tap_action: {
+    //       action: 'none',
+    //     } as ActionConfig,
+    //     double_tap_action: {
+    //       action: 'none',
+    //     } as ActionConfig,
+    //     hold_action: {
+    //       action: 'none',
+    //     } as ActionConfig,
+    //   } as MushroomTemplateCardConfig);
+    // }
 
     if (Registry.strategyOptions.quick_access_cards) {
       homeViewCards.push(...Registry.strategyOptions.quick_access_cards);
     }
 
-    if (areasSection) {
-      homeViewCards.push(areasSection);
-    }
+    // if (areasSection) {
+    //   homeViewCards.push(areasSection);
+    // }
 
+    if (weatherSection) {
+      homeViewCards.push(weatherSection);
+    }
     if (lightsOnSection) {
       homeViewCards.push(lightsOnSection);
     }
@@ -122,36 +121,7 @@ class HomeView extends AbstractView {
     ];
   }
 
-  /**
-   * Create a persons section to include in the view.
-   *
-   * If the section is marked as hidden in the strategy option, then the section is not created.
-   */
-  private async createPersonsSection(): Promise<StackCardConfig | undefined> {
-    if (Registry.strategyOptions.home_view.hidden.includes('persons')) {
-      // The section is hidden.
-
-      return;
-    }
-
-    const cardConfigurations: MushroomPersonCardConfig[] = [];
-    const PersonCard = (await import('../cards/PersonCard')).default;
-
-    cardConfigurations.push(
-      ...Registry.entities
-        .filter((entity) => entity.entity_id.startsWith('person.'))
-        .map((person) => new PersonCard(person).getCard()),
-    );
-
-    return {
-      type: 'vertical-stack',
-      cards: stackHorizontal(
-        cardConfigurations,
-        Registry.strategyOptions.home_view.stack_count['persons'] ??
-          Registry.strategyOptions.home_view.stack_count['_'],
-      ),
-    };
-  }
+  
 
   /**
    * Create the area cards to include in the view.
@@ -159,47 +129,74 @@ class HomeView extends AbstractView {
    * Area cards are grouped into two areas per row.
    * If the section is marked as hidden in the strategy option, then the section is not created.
    */
-  private async createAreasSection(): Promise<StackCardConfig | undefined> {
-    if (Registry.strategyOptions.home_view.hidden.includes('areas')) {
-      // Areas section is hidden.
+  // private async createAreasSection(): Promise<StackCardConfig | undefined> {
+  //   if (Registry.strategyOptions.home_view.hidden.includes('areas')) {
+  //     // Areas section is hidden.
+  //     return;
+  //   }
+
+  //   const cardConfigurations: (MushroomTemplateCardConfig | AreaCardConfig)[] = [];
+
+  //   for (const area of Registry.areas) {
+  //     const moduleName =
+  //       Registry.strategyOptions.areas[area.area_id]?.type ?? Registry.strategyOptions.areas['_']?.type ?? 'default';
+
+  //     let AreaCard;
+
+  //     try {
+  //       AreaCard = (await import(`../cards/${moduleName}`)).default;
+  //     } catch (e) {
+  //       // Fallback to the default strategy card.
+  //       AreaCard = (await import('../cards/AreaCard')).default;
+
+  //       if (Registry.strategyOptions.debug && moduleName !== 'default') {
+  //         logMessage(lvlError, `Error importing ${moduleName}: card!`, e);
+  //       }
+  //     }
+
+  //     cardConfigurations.push(
+  //       new AreaCard(area, {
+  //         ...Registry.strategyOptions.areas['_'],
+  //         ...Registry.strategyOptions.areas[area.area_id],
+  //       }).getCard(),
+  //     );
+  //   }
+
+  //   return {
+  //     type: 'vertical-stack',
+  //     title: Registry.strategyOptions.home_view.hidden.includes('areasTitle') ? undefined : localize('generic.areas'),
+  //     cards: stackHorizontal(cardConfigurations, Registry.strategyOptions.home_view.stack_count['_'], {
+  //       'custom:mushroom-template-card': Registry.strategyOptions.home_view.stack_count.areas?.[0],
+  //       area: Registry.strategyOptions.home_view.stack_count.areas?.[1],
+  //     }),
+  //   };
+  // }
+
+  /**
+   * Create the weather section to include in the view.
+   *
+   * If the section is marked as hidden in the strategy option, then the section is not created.
+   */
+  private async weatherSection(): Promise<ClockWeatherCardConfig | undefined> {
+    if (Registry.strategyOptions.home_view.hidden.includes('weather')) {
       return;
     }
+    const cardConfigurations: ClockWeatherCardConfig[] = [];
+    const ClockWeatherCard = (await import('../cards/ClockWeatherCard')).default;
 
-    const cardConfigurations: (MushroomTemplateCardConfig | AreaCardConfig)[] = [];
+    cardConfigurations.push(
+      ...Registry.entities
+        .filter((entity) => entity.entity_id.startsWith('weather.'))
+        .map((weather) => new ClockWeatherCard(weather).getCard()),
+    );
 
-    for (const area of Registry.areas) {
-      const moduleName =
-        Registry.strategyOptions.areas[area.area_id]?.type ?? Registry.strategyOptions.areas['_']?.type ?? 'default';
-
-      let AreaCard;
-
-      try {
-        AreaCard = (await import(`../cards/${moduleName}`)).default;
-      } catch (e) {
-        // Fallback to the default strategy card.
-        AreaCard = (await import('../cards/AreaCard')).default;
-
-        if (Registry.strategyOptions.debug && moduleName !== 'default') {
-          logMessage(lvlError, `Error importing ${moduleName}: card!`, e);
-        }
-      }
-
-      cardConfigurations.push(
-        new AreaCard(area, {
-          ...Registry.strategyOptions.areas['_'],
-          ...Registry.strategyOptions.areas[area.area_id],
-        }).getCard(),
-      );
+    if (cardConfigurations.length > 1) {
+      return {
+        type: 'vertical-stack',
+        cards: cardConfigurations
+      };
     }
-
-    return {
-      type: 'vertical-stack',
-      title: Registry.strategyOptions.home_view.hidden.includes('areasTitle') ? undefined : localize('generic.areas'),
-      cards: stackHorizontal(cardConfigurations, Registry.strategyOptions.home_view.stack_count['_'], {
-        'custom:mushroom-template-card': Registry.strategyOptions.home_view.stack_count.areas?.[0],
-        area: Registry.strategyOptions.home_view.stack_count.areas?.[1],
-      }),
-    };
+    return cardConfigurations[0];
   }
 
   /**
@@ -222,13 +219,13 @@ class HomeView extends AbstractView {
         .map((light) => new TileCard(light).getCard()),
     );
 
+    console.info(`Creating lights on section with ${cardConfigurations.length} cards.`);
+
     return {
       type: 'vertical-stack',
       cards: stackHorizontal(
         cardConfigurations,
-        Registry.strategyOptions.home_view.stack_count['lightsOn'] ??
-          Registry.strategyOptions.home_view.stack_count['_'],
-      ),
+        cardConfigurations.length),
     };
   }
 }
