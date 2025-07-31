@@ -17,7 +17,7 @@ export const ConfigurationDefaults: StrategyDefaults = {
       floor_id: null,
       hidden: false,
       humidity_entity_id: null,
-      icon: 'mdi:floor-plan',
+      icon: null, // 'mdi:floor-plan'
       labels: [],
       modified_at: 0,
       name: localize('generic.undisclosed'),

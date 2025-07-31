@@ -10,7 +10,7 @@ import { EntitySharedConfig } from '../shared/config/entity-config';
  *
  * @see https://www.home-assistant.io/dashboards/tile/
  */
-export type EntityCardConfig = LovelaceCardConfig &
+export type TileCardConfig = LovelaceCardConfig &
   EntitySharedConfig &
   AppearanceSharedConfig &
   ActionsSharedConfig & {

@@ -6,6 +6,7 @@ import { LovelaceCardConfig } from '../types/homeassistant/data/lovelace/config/
 import { AreaCardConfig, StackCardConfig } from '../types/homeassistant/panels/lovelace/cards/types';
 import { MushroomPersonCardConfig } from '../types/lovelace/cards/mushroom/person-card-config';
 import { MushroomTemplateCardConfig } from '../types/lovelace/cards/mushroom/template-card-config';
+import { TileCardConfig } from '../types/lovelace/cards/tile-card-config';
 import { ViewConfig } from '../types/strategy/strategy-views';
 import { sanitizeClassName } from '../utilities/auxiliaries';
 import { logMessage, lvlError, lvlInfo } from '../utilities/debug';
@@ -38,7 +39,7 @@ class HomeView extends AbstractView {
   static getDefaultConfig(): ViewConfig {
     return {
       title: localize('generic.home'),
-      icon: 'mdi:home-assistant',
+      icon: 'mdi:home',
       path: 'home',
       subview: false,
     };
@@ -52,12 +53,13 @@ class HomeView extends AbstractView {
   async createCardConfigurations(): Promise<LovelaceCardConfig[]> {
     const homeViewCards: LovelaceCardConfig[] = [];
 
-    let personsSection, areasSection;
+    let personsSection, areasSection, lightsOnSection;
 
     try {
-      [personsSection, areasSection] = await Promise.all([
+      [personsSection, areasSection, lightsOnSection] = await Promise.all([
         this.createPersonsSection(),
         this.createAreasSection(),
+        this.createLightsOnSection(),
       ]);
     } catch (e) {
       logMessage(lvlError, 'Error importing created sections!', e);
@@ -102,6 +104,10 @@ class HomeView extends AbstractView {
 
     if (areasSection) {
       homeViewCards.push(areasSection);
+    }
+
+    if (lightsOnSection) {
+      homeViewCards.push(lightsOnSection);
     }
 
     if (Registry.strategyOptions.extra_cards) {
@@ -193,6 +199,36 @@ class HomeView extends AbstractView {
         'custom:mushroom-template-card': Registry.strategyOptions.home_view.stack_count.areas?.[0],
         area: Registry.strategyOptions.home_view.stack_count.areas?.[1],
       }),
+    };
+  }
+
+  /**
+   * Create a lights on section to include in the view.
+   *
+   * If the section is marked as hidden in the strategy option, then the section is not created.
+   */
+  private async createLightsOnSection(): Promise<StackCardConfig | undefined> {
+    if (Registry.strategyOptions.home_view.hidden.includes('lightsOn')) {
+      // The section is hidden.
+      return;
+    }
+
+    const cardConfigurations: TileCardConfig[] = [];
+    const TileCard = (await import('../cards/TileCard')).default;
+
+    cardConfigurations.push(
+      ...Registry.entities
+        .filter((entity) => entity.entity_id.startsWith('light.'))
+        .map((light) => new TileCard(light).getCard()),
+    );
+
+    return {
+      type: 'vertical-stack',
+      cards: stackHorizontal(
+        cardConfigurations,
+        Registry.strategyOptions.home_view.stack_count['lightsOn'] ??
+          Registry.strategyOptions.home_view.stack_count['_'],
+      ),
     };
   }
 }
