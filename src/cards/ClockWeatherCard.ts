@@ -16,6 +16,8 @@ class ClockWeatherCard extends AbstractCard {
       type: 'custom:clock-weather-card',
       icon: undefined,
       forecast_rows: 8,
+      show_humidity: true,
+      hide_date: true,
     };
   }
 
