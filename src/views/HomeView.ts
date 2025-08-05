@@ -127,7 +127,6 @@ class HomeView extends AbstractView {
         .filter((entity) => entity.entity_id.startsWith('light.'))
         .map((light) => new TileCard(light).getCard()),
     );
-
     console.info(`Creating lights on section with ${cardConfigurations.length} cards.`);
 
     return {

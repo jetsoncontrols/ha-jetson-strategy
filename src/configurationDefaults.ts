@@ -144,7 +144,10 @@ export const ConfigurationDefaults: StrategyDefaults = {
   extra_cards: [],
   extra_views: [],
   home_view: {
-    hidden: [],
+    hidden: [
+      // 'weather',
+      // 'lights_on',
+    ],
     stack_count: {
       _: 2,
     },
