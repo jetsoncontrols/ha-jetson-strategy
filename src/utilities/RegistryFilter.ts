@@ -86,6 +86,15 @@ class RegistryFilter<T extends RegistryEntry, K extends keyof T = keyof T> {
       let deviceAreaId: string | null | undefined = undefined;
       const entryObject = entry as EntityRegistryEntry;
 
+      // Type guard for area_id
+      const hasAreaId = (obj: any): obj is { area_id: string | null | undefined } =>
+        'area_id' in obj;
+
+      if (!hasAreaId(entry)) {
+        // If entry doesn't have area_id, skip this filter
+        return false;
+      }
+
       if (expandToDevice && entryObject.device_id) {
         deviceAreaId = Registry.devices.find((device) => device.id === entryObject.device_id)?.area_id;
       }

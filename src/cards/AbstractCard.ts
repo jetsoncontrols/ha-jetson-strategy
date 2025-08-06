@@ -15,7 +15,7 @@ import { logMessage, lvlFatal } from '../utilities/debug';
  */
 abstract class AbstractCard {
   /** The registry entry this card represents. */
-  readonly entity: RegistryEntry;
+  readonly entity?: RegistryEntry;
 
   /**
    * The card configuration for this entity.
@@ -35,7 +35,7 @@ abstract class AbstractCard {
    * @remarks
    * Before this class can be used, the Registry module must be initialized by calling {@link Registry.initialize}.
    */
-  protected constructor(entity: RegistryEntry) {
+  protected constructor(entity?: RegistryEntry) {
     if (!Registry.initialized) {
       logMessage(lvlFatal, 'Registry not initialized!');
     }
@@ -51,7 +51,7 @@ abstract class AbstractCard {
   getCard(): AbstractCardConfig {
     return {
       ...this.configuration,
-      entity: 'entity_id' in this.entity ? this.entity.entity_id : undefined,
+      entity: this.entity && 'entity_id' in this.entity ? this.entity.entity_id : undefined,
     };
   }
 }

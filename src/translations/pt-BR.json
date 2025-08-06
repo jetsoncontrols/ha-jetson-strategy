@@ -39,7 +39,8 @@
   },
   "light": {
     "all_lights": "Todas as luzes",
-    "lights": "Luzes"
+    "lights": "Luzes",
+    "lights_on_right_now": ""
   },
   "lock": {
     "all_locks": "Todas as fechaduras",

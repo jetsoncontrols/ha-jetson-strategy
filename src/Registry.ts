@@ -10,6 +10,7 @@ import {
   SingleDomainConfig,
   StrategyArea,
   StrategyConfig,
+  StrategyFloor,
   StrategyViewConfig,
   SupportedDomains,
   SupportedViews,
@@ -17,6 +18,7 @@ import {
 import { logMessage, lvlFatal, lvlOff, lvlWarn, setDebugLevel } from './utilities/debug';
 import setupCustomLocalize from './utilities/localize';
 import RegistryFilter from './utilities/RegistryFilter';
+import { FloorRegistryEntry } from './types/homeassistant/data/floor_registry';
 
 /**
  * Registry Class
@@ -77,6 +79,20 @@ class Registry {
     return Registry._entities;
   }
 
+  /** Entries of Home Assistant's floor registry. */
+  private static _floors: StrategyFloor[] = [];
+
+  /**
+   * Home Assistant's Floor registry.
+   *
+   * @remarks
+   * This module makes changes to the registry at {@link Registry.initialize}.
+   */
+  static get floors(): StrategyFloor[] {
+    return Registry._floors;
+  }
+
+
   /** Entries of Home Assistant's area registry. */
   private static _areas: StrategyArea[] = [];
 
@@ -126,10 +142,11 @@ class Registry {
     // Import the registries of Home Assistant.
     try {
       // noinspection ES6MissingAwait False positive? https://youtrack.jetbrains.com/issue/WEB-63746
-      [Registry._entities, Registry._devices, Registry._areas] = await Promise.all([
+      [Registry._entities, Registry._devices, Registry._areas, Registry._floors] = await Promise.all([
         info.hass.callWS({ type: 'config/entity_registry/list' }) as Promise<EntityRegistryEntry[]>,
         info.hass.callWS({ type: 'config/device_registry/list' }) as Promise<DeviceRegistryEntry[]>,
         info.hass.callWS({ type: 'config/area_registry/list' }) as Promise<AreaRegistryEntry[]>,
+        info.hass.callWS({ type: 'config/floor_registry/list' }) as Promise<FloorRegistryEntry[]>,
       ]);
     } catch (e) {
       logMessage(lvlFatal, 'Error importing Home Assistant registries!', e);
@@ -168,6 +185,37 @@ class Registry {
       ...device,
       area_id: device.area_id ?? 'undisclosed',
     }));
+
+    // Process entries of the HASS floor registry.
+    if (Registry.strategyOptions.floors._.hidden) {
+      Registry._floors = [];
+    } else {
+      // Create and add the undisclosed floor if not hidden in the strategy options.
+      if (!Registry.strategyOptions.floors.undisclosed?.hidden) {
+        Registry._floors.push(ConfigurationDefaults.floors.undisclosed);
+      }
+      // Merge floor configurations of the Strategy options into the entries of the floor registry.
+      Registry._floors = Registry.floors.map((floor) => {
+        // Map order to the base class's level value
+        const order = floor.level !== null ? floor.level : undefined;
+        return {
+          ...floor,
+          order,
+          ...Registry.strategyOptions.floors['_'],
+          ...Registry.strategyOptions.floors?.[floor.floor_id],
+        };
+      });
+      
+      // Ensure the custom configuration of the undisclosed floor doesn't overwrite the required property values.
+      Registry.strategyOptions.floors.undisclosed.floor_id = 'undisclosed';
+      Registry.strategyOptions.floors.undisclosed.type = 'default';
+
+      // Remove hidden floors if configured as so and sort them by name.
+      Registry._floors = new RegistryFilter(Registry.floors)
+        .isNotHidden()
+        .orderBy(['order', 'name'], 'asc')
+        .toList();
+    }
 
     // Process entries of the HASS area registry.
     if (Registry.strategyOptions.areas._.hidden) {

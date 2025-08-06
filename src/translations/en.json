@@ -39,7 +39,8 @@
   },
   "light": {
     "all_lights": "All Lights",
-    "lights": "Lights"
+    "lights": "Lights",
+    "lights_on_right_now": "Lights On Right Now"
   },
   "lock": {
     "all_locks": "All Locks",

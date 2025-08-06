@@ -19,7 +19,7 @@ class HeadingCard extends AbstractCard {
    * Class constructor.
    *
    * @param {any} entity The entity or data to create a heading card for.
-   * @param {MushroomTitleCardConfig} [customConfiguration] Custom card configuration.
+   * @param {HeadingCardConfig} [customConfiguration] Custom card configuration.
    */
   constructor(entity: any, customConfiguration?: HeadingCardConfig) {
     super(entity);

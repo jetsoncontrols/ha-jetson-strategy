@@ -39,7 +39,8 @@
   },
   "light": {
     "all_lights": "Todas las Luces",
-    "lights": "Luces"
+    "lights": "Luces",
+    "lights_on_right_now": "Luces encendidas en este momento"
   },
   "lock": {
     "all_locks": "Todas las Candados",

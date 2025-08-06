@@ -7,6 +7,7 @@ import { LovelaceViewConfig, LovelaceViewRawConfig } from '../homeassistant/data
 import { HomeAssistant } from '../homeassistant/types';
 import { StrategyHeaderCardConfig } from './strategy-cards';
 import { AreaRegistryEntry } from '../homeassistant/data/area_registry';
+import { FloorRegistryEntry } from '../homeassistant/data/floor_registry';
 
 /**
  * List of supported domains.
@@ -110,7 +111,7 @@ export type Sortable = SortableWithTitle | SortableWithName;
 /**
  * An entry of a Home Assistant Registry.
  */
-export type RegistryEntry = StrategyArea | DeviceRegistryEntry | EntityRegistryEntry;
+export type RegistryEntry = StrategyFloor | StrategyArea | DeviceRegistryEntry | EntityRegistryEntry;
 
 /**
  * View Configuration of the strategy.
@@ -207,6 +208,7 @@ export interface SingleDomainConfig extends Partial<StrategyHeaderCardConfig> {
  *                                                       and rooms cards.
  */
 export interface StrategyConfig {
+  floors: { [S: string]: StrategyFloor };
   areas: { [S: string]: StrategyArea };
   card_options: { [S: string]: CustomCardConfig };
   debug: boolean;
@@ -230,6 +232,21 @@ export type StrategyDefaults = Omit<StrategyConfig, 'areas'> & {
     undisclosed: StrategyArea;
   };
 };
+
+/**
+ * Strategy Floor.
+ *
+ * @property {boolean} [hidden] True if the floor should be hidden from the dashboard.
+ * @property {object[]} [extra_cards] - An array of card configurations.
+ *                                      The configured cards are added to the dashboard.
+ * @property {string} [type] - The type of floor card.
+ */
+export interface StrategyFloor extends FloorRegistryEntry {
+  extra_cards?: LovelaceCardConfig[];
+  hidden?: boolean;
+  order?: number;
+  type?: string;
+}
 
 /**
  * Strategy Area.

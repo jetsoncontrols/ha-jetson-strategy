@@ -39,7 +39,8 @@
   },
   "light": {
     "all_lights": "Alle Lampen",
-    "lights": "Lampen"
+    "lights": "Lampen",
+    "lights_on_right_now": ""
   },
   "lock": {
     "all_locks": "Alle Sloten",

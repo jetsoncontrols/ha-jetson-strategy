@@ -3,6 +3,7 @@
 import { Registry } from '../Registry';
 import { LovelaceCardConfig } from '../types/homeassistant/data/lovelace/config/card';
 import { TileCardConfig } from '../types/lovelace/cards/tile-card-config';
+import { GridCardConfig } from '../types/lovelace/cards/grid-card-config';
 import { ClockWeatherCardConfig } from '../types/lovelace/cards/clock-weather-card-config';
 import { ViewConfig } from '../types/strategy/strategy-views';
 import { logMessage, lvlError, lvlInfo } from '../utilities/debug';
@@ -10,6 +11,7 @@ import { localize } from '../utilities/localize';
 import AbstractView from './AbstractView';
 import { stackHorizontal } from '../utilities/cardStacking';
 import { StackCardConfig } from '../types/homeassistant/panels/lovelace/cards/types';
+import { HeadingCardConfig } from '../types/lovelace/cards/heading-card-config';
 
 /**
  * Home View Class.
@@ -113,28 +115,67 @@ class HomeView extends AbstractView {
    *
    * If the section is marked as hidden in the strategy option, then the section is not created.
    */
-  private async createLightsOnSection(): Promise<StackCardConfig | undefined> {
-    if (Registry.strategyOptions.home_view.hidden.includes('lightsOn')) {
-      // The section is hidden.
+  private async createLightsOnSection(): Promise<GridCardConfig | undefined> {
+    if (Registry.strategyOptions.home_view.hidden.includes('lightsOn')) { // The section is hidden.
       return;
     }
 
-    const cardConfigurations: TileCardConfig[] = [];
-    const TileCard = (await import('../cards/TileCard')).default;
+    const GridCard = (await import('../cards/GridCard')).default;
+    let result: GridCardConfig = GridCard.getDefaultConfig();
+    
+    // Add Heading card to the grid card.
+    const HeadingCard = (await import('../cards/HeadingCard')).default;
+    let lightsOnHeading: HeadingCardConfig = HeadingCard.getDefaultConfig();
+    lightsOnHeading.heading = localize('light.lights_on_right_now');
+    lightsOnHeading.icon = 'mdi:lightbulb-group-outline';
+    lightsOnHeading.heading_style = 'title';
+    result.cards.push(lightsOnHeading);
 
-    cardConfigurations.push(
-      ...Registry.entities
-        .filter((entity) => entity.entity_id.startsWith('light.'))
-        .map((light) => new TileCard(light).getCard()),
-    );
-    console.info(`Creating lights on section with ${cardConfigurations.length} cards.`);
+    Registry.floors.forEach((floor) => {
+      if (!floor.hidden) {
+        logMessage(lvlInfo, 'Found Floor: ', floor);
+        // Create a card for each floor.
+      }
+    });
 
-    return {
-      type: 'vertical-stack',
-      cards: stackHorizontal(
-        cardConfigurations,
-        cardConfigurations.length),
-    };
+    // Registry.areas.forEach((area) => {
+    //   if (!area.hidden) {
+        
+    //     logMessage(lvlInfo, 'Found Area: ', area);
+    //     // area.
+    //     result.cards.push({type: 'clock'});
+    //   }
+    // });
+
+
+
+
+
+
+
+
+    return result;
+
+
+
+
+
+  //   const cardConfigurations: TileCardConfig[] = [];
+  //   const TileCard = (await import('../cards/TileCard')).default;
+
+  //   cardConfigurations.push(
+  //     ...Registry.entities
+  //       .filter((entity) => entity.entity_id.startsWith('light.'))
+  //       .map((light) => new TileCard(light).getCard()),
+  //   );
+  //   console.info(`Creating lights on section with ${cardConfigurations.length} cards.`);
+
+  //   return {
+  //     type: 'vertical-stack',
+  //     cards: stackHorizontal(
+  //       cardConfigurations,
+  //       cardConfigurations.length),
+  //   };
   }
 }
 
