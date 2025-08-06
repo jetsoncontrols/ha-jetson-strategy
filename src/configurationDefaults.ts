@@ -5,6 +5,24 @@ import { localize } from './utilities/localize';
  * Default configuration for the strategy.
  */
 export const ConfigurationDefaults: StrategyDefaults = {
+
+  floors: {
+    _: {
+      type: 'FloorCard',
+    },
+    undisclosed: {
+      name: localize('generic.undisclosed'),
+      level: null,
+      hidden: false,
+      icon: null,
+      aliases: [],
+      order: Infinity,
+      created_at: 0,
+      modified_at: 0,
+      floor_id: 'undisclosed'
+    },
+  },
+
   areas: {
     _: {
       type: 'AreaCard',

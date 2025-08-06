@@ -226,10 +226,14 @@ export interface StrategyConfig {
 /**
  * Represents the default configuration for a strategy.
  */
-export type StrategyDefaults = Omit<StrategyConfig, 'areas'> & {
+export type StrategyDefaults = Omit<StrategyConfig, 'areas' | 'floors'> & {
   areas: {
     _: AllAreasConfig;
     undisclosed: StrategyArea;
+  };
+  floors: {
+    _: { type: string }; // or a more specific base config if you have one
+    undisclosed: StrategyFloor;
   };
 };
 

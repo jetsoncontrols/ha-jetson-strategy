@@ -195,16 +195,17 @@ class Registry {
         Registry._floors.push(ConfigurationDefaults.floors.undisclosed);
       }
       // Merge floor configurations of the Strategy options into the entries of the floor registry.
-      Registry._floors = Registry.floors.map((floor) => {
-        // Map order to the base class's level value
-        const order = floor.level !== null ? floor.level : undefined;
-        return {
-          ...floor,
-          order,
-          ...Registry.strategyOptions.floors['_'],
-          ...Registry.strategyOptions.floors?.[floor.floor_id],
-        };
-      });
+      Registry._floors = Registry.floors
+        .filter((floor) => floor != null)
+        .map((floor) => {
+          const order = floor.level !== null ? floor.level : undefined;
+          return {
+            ...floor,
+            order,
+            ...Registry.strategyOptions.floors['_'],
+            ...Registry.strategyOptions.floors?.[floor.floor_id],
+          };
+        });
       
       // Ensure the custom configuration of the undisclosed floor doesn't overwrite the required property values.
       Registry.strategyOptions.floors.undisclosed.floor_id = 'undisclosed';

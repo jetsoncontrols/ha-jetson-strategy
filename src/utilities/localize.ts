@@ -1,18 +1,12 @@
-import * as de from '../translations/de.json';
 import * as en from '../translations/en.json';
 import * as es from '../translations/es.json';
-import * as nl from '../translations/nl.json';
-import * as pt_br from '../translations/pt-BR.json';
 import { HomeAssistant } from '../types/homeassistant/types';
 import { logMessage, lvlWarn } from './debug';
 
 /** Registry of currently supported languages */
 const languages: Record<string, unknown> = {
-  de,
   en,
   es,
-  nl,
-  'pt-BR': pt_br,
 };
 
 /** The fallback language if the user-defined language isn't defined */
