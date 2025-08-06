@@ -23,7 +23,7 @@ abstract class AbstractCard {
    * Child classes should override this property to reflect their own card type and options.
    */
   protected configuration: LovelaceCardConfig = {
-    type: 'custom:mushroom-entity-card',
+    type: 'tile',
     icon: 'mdi:help-circle',
   };
 

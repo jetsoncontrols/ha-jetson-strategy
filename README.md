@@ -35,17 +35,31 @@ Home Assistant Lovelace Strategy for enhanced dashboard configuration and manage
 
 ```yaml
 resources:
-  - url: /local/jetson-strategy.js
+  - url: /hacsfiles/ha-jetson-strategy/jetson-strategy.js
     type: module
 ```
+
+### Dependencies (from HACS)
+Clock Weather Card
+Kleenex Pollen Radar
+Weather Radar Card
+expander-card
+auto-entities
+
 
 ## Configuration
 
 Add the strategy to your Lovelace dashboard configuration:
 
 ```yaml
-strategy:
-  type: custom:jetson-strategy
+strategy: null
+type: custom:jetson-strategy
+options:
+  home_view:
+    weather_details:
+      grass_pollen_entity: sensor.kleenex_pollen_radar_home_grass_level
+      trees_pollen_entity: sensor.kleenex_pollen_radar_home_trees_level
+      weeds_pollen_entity: sensor.kleenex_pollen_radar_home_weeds_level
 ```
 
 ### Configuration Options

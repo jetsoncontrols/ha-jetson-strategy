@@ -78,5 +78,12 @@
     "closing": "Cerrando",
     "stopped": "Detenida",
     "unclosed": "No Cerrada"
+  },
+  "weather": {
+    "weather": "Clima",
+    "details": "Detalles",
+    "grass_pollen": "Polen de Pasto",
+    "trees_pollen": "Polen de Árboles",
+    "weeds_pollen": "Polen de Hierba"
   }
 }

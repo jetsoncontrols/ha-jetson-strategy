@@ -217,6 +217,12 @@ export interface StrategyConfig {
   extra_views: StrategyViewConfig[];
   home_view: {
     hidden: HomeViewSections[];
+    weather_details: {
+      hidden: boolean;
+      grass_pollen_entity?: string;
+      trees_pollen_entity?: string;
+      weeds_pollen_entity?: string;
+    };
     stack_count: { _: number } & { [K in HomeViewSections]?: K extends 'areas' ? [number, number] : number };
   };
   views: Record<SupportedViews, StrategyViewConfig>;

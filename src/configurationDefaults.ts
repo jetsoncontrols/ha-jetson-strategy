@@ -166,6 +166,12 @@ export const ConfigurationDefaults: StrategyDefaults = {
       // 'weather',
       // 'lights_on',
     ],
+    weather_details: {
+      hidden: false,
+      grass_pollen_entity: undefined,
+      trees_pollen_entity: undefined,
+      weeds_pollen_entity: undefined,
+    },
     stack_count: {
       _: 2,
     },

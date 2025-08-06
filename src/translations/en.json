@@ -78,5 +78,12 @@
     "closing": "Closing",
     "stopped": "Stopped",
     "unclosed": "Unclosed"
+  },
+  "weather": {
+    "weather": "Weather",
+    "details": "Details",
+    "grass_pollen": "Grass Pollen",
+    "trees_pollen": "Trees Pollen",
+    "weeds_pollen": "Weeds Pollen"
   }
 }

@@ -14,10 +14,9 @@ class TileCard extends AbstractCard {
   static getDefaultConfig(): TileCardConfig {
     return {
       type: 'tile',
-      icon: undefined,
-      tap_action: {
-        action: 'toggle',
-      },
+      // tap_action: {
+      //   action: 'toggle',
+      // },
     };
   }
 
