@@ -11,22 +11,21 @@ class ExpanderCard extends AbstractCard {
   static getDefaultConfig(): ExpanderCardConfig {
     return {
       type: "custom:expander-card",
-      expanded: false,
     };
   }
 
-    /**
-     * Class constructor.
-     *
-     * @param {ExpanderCardConfig} [customConfiguration] Custom card configuration.
-     */
-    constructor(customConfiguration?: ExpanderCardConfig) {
-        super();
-        this.configuration = {      ...this.configuration,
-        ...ExpanderCard.getDefaultConfig(),
-        ...customConfiguration,
-        };
-    }
+  /**
+   * Class constructor.
+   *
+   * @param {ExpanderCardConfig} [customConfiguration] Custom card configuration.
+   */
+  constructor(customConfiguration?: ExpanderCardConfig) {
+      super();
+      this.configuration = {      ...this.configuration,
+      ...ExpanderCard.getDefaultConfig(),
+      ...customConfiguration,
+      };
+  }
 }
 
 export default ExpanderCard;

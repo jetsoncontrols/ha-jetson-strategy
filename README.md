@@ -44,6 +44,7 @@ Clock Weather Card
 Kleenex Pollen Radar
 Weather Radar Card
 expander-card
+  hacs custom repository:  https://github.com/Alia5/lovelace-expander-card
 auto-entities
 
 

@@ -127,7 +127,7 @@ class HomeView extends AbstractView {
           Registry.strategyOptions.home_view.weather_details.trees_pollen_entity ||
           Registry.strategyOptions.home_view.weather_details.weeds_pollen_entity) {
         const HorizontalStackCard = (await import('../cards/HorizontalStackCard')).default;
-        let pollenCardsConfig: HorizontalStackCardConfig = HorizontalStackCard.getDefaultConfig();
+        let pollenStackCardConfig: HorizontalStackCardConfig = HorizontalStackCard.getDefaultConfig();
         const TileCard = (await import('../cards/TileCard')).default;
         if (Registry.strategyOptions.home_view.weather_details.grass_pollen_entity) {
           let grassPollenCard: TileCardConfig = TileCard.getDefaultConfig();
@@ -135,7 +135,7 @@ class HomeView extends AbstractView {
           grassPollenCard.name = localize('weather.grass_pollen');
           grassPollenCard.features_position = 'bottom';
           grassPollenCard.vertical = true;
-          pollenCardsConfig.cards.push(grassPollenCard);
+          pollenStackCardConfig.cards.push(grassPollenCard);
         }
         if (Registry.strategyOptions.home_view.weather_details.trees_pollen_entity) {
           let treesPollenCard: TileCardConfig = TileCard.getDefaultConfig();
@@ -143,7 +143,7 @@ class HomeView extends AbstractView {
           treesPollenCard.name = localize('weather.trees_pollen');
           treesPollenCard.features_position = 'bottom';
           treesPollenCard.vertical = true;
-          pollenCardsConfig.cards.push(treesPollenCard);
+          pollenStackCardConfig.cards.push(treesPollenCard);
         }
         if (Registry.strategyOptions.home_view.weather_details.weeds_pollen_entity) {
           let weedsPollenCard: TileCardConfig = TileCard.getDefaultConfig();
@@ -151,9 +151,9 @@ class HomeView extends AbstractView {
           weedsPollenCard.name = localize('weather.weeds_pollen');
           weedsPollenCard.features_position = 'bottom';
           weedsPollenCard.vertical = true;
-          pollenCardsConfig.cards.push(weedsPollenCard);
+          pollenStackCardConfig.cards.push(weedsPollenCard);
         }
-          weatherDetailsExpanderConfig.cards.push(pollenCardsConfig);
+          weatherDetailsExpanderConfig.cards.push(pollenStackCardConfig);
       }
 
       // Add Weather Radar card to the expander.
