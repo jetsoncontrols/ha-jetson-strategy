@@ -1,6 +1,6 @@
 {
   "name": "jetson-strategy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Home Assistant Lovelace Strategy",
   "main": "dist/jetson-strategy.js",
   "scripts": {

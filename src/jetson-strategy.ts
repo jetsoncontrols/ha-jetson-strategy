@@ -17,6 +17,9 @@ import { sanitizeClassName } from './utilities/auxiliaries';
 import { logMessage, lvlError, lvlInfo } from './utilities/debug';
 import RegistryFilter from './utilities/RegistryFilter';
 import { stackHorizontal } from './utilities/cardStacking';
+// Derive the strategy version from package.json so it stays in sync.
+// Webpack + TS (resolveJsonModule) allows importing JSON directly.
+import pkg from '../package.json';
 // import { PersistentNotification } from './utilities/PersistentNotification';
 // import { HomeAssistant } from './types/homeassistant/types';
 // import semver from 'semver/preload';
@@ -229,7 +232,7 @@ export class JetsonStrategy extends HTMLTemplateElement {
 
 customElements.define('ll-strategy-dashboard-jetson-strategy', JetsonStrategy);
 
-const STRATEGY_VERSION = 'v1.0.0';
+const STRATEGY_VERSION = `v${pkg.version}`;
 console.info(
   '%c Jetson Strategy %c '.concat(STRATEGY_VERSION, ' '),
   'color: white; background: coral; font-weight: 700;',

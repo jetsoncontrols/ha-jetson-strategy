@@ -37,7 +37,7 @@ class HomeView extends AbstractView {
   static getDefaultConfig(): ViewConfig {
     return {
       title: localize('generic.home'),
-      icon: undefined,//'mdi:home',
+      icon: undefined,
       path: 'home',
       subview: false,
     };
